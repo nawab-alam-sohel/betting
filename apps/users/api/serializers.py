@@ -14,14 +14,20 @@ User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
+    # accept `name` from API and map to model `full_name` in create()
+    name = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
+        # Accept `name` from the API but map to `full_name` on the model in create().
         fields = ["email", "password", "name"]
 
     def create(self, validated_data):
         password = validated_data.pop("password")
+        # Map API `name` field to model `full_name`.
+        name = validated_data.pop('name', '')
         user = User(**validated_data)
+        user.full_name = name
         user.set_password(password)
         user.save()
         return user
@@ -45,7 +51,8 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "name"]
+        # Expose `full_name` instead of a non-existent `name` field.
+        fields = ["id", "email", "full_name"]
 
 
 class LogoutSerializer(serializers.Serializer):
@@ -65,7 +72,7 @@ class LogoutSerializer(serializers.Serializer):
 
 
 
-class LoginSerializer(TokenObtainPairSerializer):
+class CustomTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -79,25 +86,24 @@ class LoginSerializer(TokenObtainPairSerializer):
             "id": self.user.id,
             "email": self.user.email,
             "phone": self.user.phone,
-            "name": self.user.name,
+            "full_name": self.user.full_name,
         }
         return data
     
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "phone", "date_joined"]
+        fields = ["id", "email", "full_name", "phone", "date_joined"]
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "phone", "address"]
+        # Allow updating full_name and phone from profile update endpoint
+        fields = ["full_name", "phone"]
         extra_kwargs = {
-            "first_name": {"required": False},
-            "last_name": {"required": False},
+            "full_name": {"required": False},
             "phone": {"required": False},
-            "address": {"required": False},
         }
 
 

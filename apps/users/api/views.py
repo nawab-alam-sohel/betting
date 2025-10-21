@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from .serializers import PasswordChangeSerializer, RegisterSerializer, ResetPasswordSerializer
 from .services import UserService
 from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
-from .serializers import LoginSerializer
+from .serializers import LoginSerializer, CustomTokenSerializer
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
 from apps.users.models import User
@@ -32,6 +32,7 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
+        # Use the basic LoginSerializer to authenticate and return tokens.
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data["user"]
@@ -43,7 +44,7 @@ class LoginView(APIView):
                 "user": {
                     "id": user.id,
                     "email": user.email,
-                    "name": user.name
+                    "full_name": user.full_name
                 }
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

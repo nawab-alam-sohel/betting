@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.pyt
+env/
+.venv/
+venv/
+ENV/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+/media
+/staticfiles
+/config/media
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Docker
+*.env
+docker-compose.override.yml
+
+# Byte-compiled / optimized
+*.egg-info/
+
+# Coverage
+.coverage
+
+# Others
+node_modules/
