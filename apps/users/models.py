@@ -45,6 +45,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, blank=True, null=True)
     # Replace old role CharField with FK to Role
     role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.SET_NULL, related_name='users')
+    # optional agent relationship: the agent that referred or manages this user
+    agent = models.ForeignKey('agents.Agent', null=True, blank=True, on_delete=models.SET_NULL, related_name='clients')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

@@ -35,15 +35,41 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 DJANGO_PRODUCTION = os.getenv('DJANGO_PRODUCTION', '0') == '1'
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
+# Security defaults for production
+if DJANGO_PRODUCTION:
+    # Ensure DEBUG is False in production
+    DEBUG = False
+    # Use secure cookies and redirect to HTTPS
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # HSTS - set to 1 year (adjust carefully)
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 31536000))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# Secret key guidance: ensure a long random secret in production
+if not SECRET_KEY or len(SECRET_KEY) < 50:
+    # In development this may be unset; in production ensure you set a secure SECRET_KEY
+    if DJANGO_PRODUCTION:
+        raise RuntimeError('SECRET_KEY must be set to a long, random value in production')
+
 
 
 
 # Application definition
 
 INSTALLED_APPS = [
-     "jazzmin",  # <- add this line
+    "jazzmin",  # <- add this line
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    # Local Apps
+    'apps.wallets',
+    'apps.bets',
+    'apps.agents',
+    'apps.payments',
+    'apps.sports',
+    'apps.notifications',  # Notification system
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +79,83 @@ INSTALLED_APPS = [
     # Local Apps
     'apps.users',
 ]
+
+# Sports API Configuration
+SPORTS_API_KEY = os.getenv('SPORTS_API_KEY')
+SPORTS_API_BASE_URL = os.getenv('SPORTS_API_BASE_URL')
+
+# Jazzmin Admin Theme Settings
+JAZZMIN_SETTINGS = {
+    # title of the window
+    "site_title": "VelkiList Admin",
+    # Title on the brand, and the login screen (19 chars max)
+    "site_header": "VelkiList",
+    # square logo to use for your site, must be present in static files
+    "site_logo": None,
+    # Welcome text on the login screen
+    "welcome_sign": "Welcome to VelkiList Admin",
+    # Copyright on the footer
+    "copyright": "VelkiList Ltd",
+    # The model admin to search from the search bar
+    "search_model": "users.User",
+    # Field name on user model that contains avatar image
+    "user_avatar": None,
+    ############
+    # Top Menu #
+    ############
+    # Links to put along the top menu
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "users.User"},
+        {"model": "sports.Game"},
+    ],
+    #############
+    # Side Menu #
+    #############
+    # Whether to display the side menu
+    "show_sidebar": True,
+    # Whether to aut expand the menu
+    "navigation_expanded": True,
+    # Custom icons for side menu apps/models
+    "icons": {
+        "users": "fas fa-users",
+        "users.user": "fas fa-user",
+        "users.Role": "fas fa-user-tag",
+        "sports.Category": "fas fa-trophy",
+        "sports.League": "fas fa-flag",
+        "sports.Team": "fas fa-shield-alt",
+        "sports.Game": "fas fa-futbol",
+        "sports.Market": "fas fa-chart-line",
+        "sports.Selection": "fas fa-check-circle",
+        "bets.Bet": "fas fa-ticket-alt",
+        "wallets.Wallet": "fas fa-wallet",
+        "payments.PaymentIntent": "fas fa-money-bill",
+        "agents.Agent": "fas fa-user-tie",
+    },
+    # Icons that are used when one is not manually specified
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    #################
+    # Related Modal #
+    #################
+    # Whether to show the plus/edit/delete links on the related modal
+    "related_modal_active": True,
+    #############
+    # UI Tweaks #
+    #############
+    # Whether to show the UI customizer on the sidebar
+    "show_ui_builder": True,
+    ###############
+    # Change view #
+    ###############
+    # Render out the change view as a single form, or in tabs
+    "changeform_format": "horizontal_tabs",
+    # override change forms on a per modeladmin basis
+    "changeform_format_overrides": {
+        "users.user": "collapsible",
+        "sports.game": "horizontal_tabs",
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -66,6 +169,14 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+# Celery / Redis
+REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', REDIS_URL)
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', REDIS_URL)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 
 MIDDLEWARE = [
@@ -161,3 +272,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'config/media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+# Celery / Redis configuration
+REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL

@@ -24,6 +24,22 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: velkilist-redis
+    ports:
+      - "6379:6379"
+
+  worker:
+    build: .
+    container_name: velkilist-worker
+    environment:
+      - WORKER=1
+    depends_on:
+      - db
+      - redis
 
 volumes:
   postgres_data:
