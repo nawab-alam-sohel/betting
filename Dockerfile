@@ -18,3 +18,11 @@ COPY . /app/
 
 # ✅ Collect static files (Only works if STATIC_ROOT is set)
 RUN python manage.py collectstatic --noinput
+
+# Add entrypoint script
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENV DJANGO_PRODUCTION=0
+
+CMD ["/entrypoint.sh"]

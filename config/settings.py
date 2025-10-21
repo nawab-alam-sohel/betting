@@ -31,7 +31,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+# In production set DJANGO_PRODUCTION=1 and provide ALLOWED_HOSTS via env var
+DJANGO_PRODUCTION = os.getenv('DJANGO_PRODUCTION', '0') == '1'
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 
