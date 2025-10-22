@@ -10,6 +10,8 @@ if [ "$WORKER" = "1" ]; then
 fi
 
 if [ "$DJANGO_PRODUCTION" = "1" ]; then
+  # Collect static files in production
+  python manage.py collectstatic --noinput
   # Start Gunicorn for production
   exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
 else

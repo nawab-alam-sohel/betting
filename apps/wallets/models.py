@@ -42,6 +42,8 @@ class Transaction(models.Model):
         ('deposit', 'Deposit'),
         ('withdraw', 'Withdraw'),
         ('bet', 'Bet'),
+        ('hold', 'Hold'),
+        ('commission', 'Commission'),
         ('win', 'Win'),
         ('refund', 'Refund'),
     ]

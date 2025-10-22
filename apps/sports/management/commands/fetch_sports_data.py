@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 import requests
 from django.conf import settings
+from apps.sports.models import SportsProvider
 from apps.sports.models import Category, League, Team, Game, Market, Selection
 from django.utils import timezone
 from datetime import timedelta
@@ -21,8 +22,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fetch_type = options['type']
-        api_key = settings.SPORTS_API_KEY
-        base_url = settings.SPORTS_API_BASE_URL
+        # Prefer provider config from DB; fallback to settings
+        provider = SportsProvider.objects.filter(active=True).first()
+        if provider and provider.base_url and (provider.config or {}).get('api_key'):
+            base_url = provider.base_url
+            api_key = provider.config.get('api_key')
+        else:
+            api_key = settings.SPORTS_API_KEY
+            base_url = settings.SPORTS_API_BASE_URL
 
         try:
             if fetch_type == 'categories':

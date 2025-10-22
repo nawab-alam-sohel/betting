@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+<h1>Adjust Wallet Balance</h1>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+  </table>
+  <div class="submit-row">
+    <input type="submit" class="default" value="Save adjustment" />
+  </div>
+</form>
+
+<p class="help">This will create a Transaction row. If status is completed, the wallet balance will be updated immediately.</p>
+{% endblock %}

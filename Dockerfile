@@ -16,8 +16,7 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . /app/
 
-# ✅ Collect static files (Only works if STATIC_ROOT is set)
-RUN python manage.py collectstatic --noinput
+# Collect static files at runtime in entrypoint when DJANGO_PRODUCTION=1
 
 # Add entrypoint script
 COPY ./entrypoint.sh /entrypoint.sh

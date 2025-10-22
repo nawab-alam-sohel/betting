@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, League, Team, Game, Market, Selection
+from .models import Category, League, Team, Game, Market, Selection, SportsProvider
 
 
 @admin.register(Category)
@@ -129,3 +129,10 @@ class SelectionAdmin(admin.ModelAdmin):
     def activate_selections(self, request, queryset):
         queryset.update(status='active')
     activate_selections.short_description = "Activate selected selections"
+
+
+@admin.register(SportsProvider)
+class SportsProviderAdmin(admin.ModelAdmin):
+    list_display = ("key", "name", "active", "updated_at")
+    list_editable = ("active",)
+    search_fields = ("key", "name")

@@ -62,6 +62,22 @@ services:
     volumes:
       - .:/app
 
+  beat:
+    build: .
+    container_name: velkilist-beat
+    environment:
+      - BEAT=1
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: sh -c "celery -A config beat --loglevel=info"
+    volumes:
+      - .:/app
+
   frontend:
     image: node:20-alpine
     container_name: velkilist-frontend

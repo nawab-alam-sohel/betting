@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220" />
+      <stop offset="50%" stop-color="#111a33" />
+      <stop offset="100%" stop-color="#0b1220" />
+    </linearGradient>
+    <radialGradient id="glow1" cx="80%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#60a5fa" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow2" cx="20%" cy="80%" r="55%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.5" />
+      <stop offset="70%" stop-color="#22d3ee" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <circle cx="1180" cy="180" r="260" fill="url(#glow1)"/>
+  <circle cx="240" cy="720" r="300" fill="url(#glow2)"/>
+  <g opacity="0.08" fill="#fff">
+    <path d="M0 820h1440v8H0zM0 780h1440v8H0zM0 740h1440v8H0zM0 700h1440v8H0zM0 660h1440v8H0z"/>
+  </g>
+  <text x="40" y="860" fill="#8aa2ff" font-family="Segoe UI,Verdana,Arial" font-size="16" opacity="0.4">Replace this with your real login background later</text>
+</svg>

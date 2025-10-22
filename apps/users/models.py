@@ -47,6 +47,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.SET_NULL, related_name='users')
     # optional agent relationship: the agent that referred or manages this user
     agent = models.ForeignKey('agents.Agent', null=True, blank=True, on_delete=models.SET_NULL, related_name='clients')
+    # dashboard-related flags
+    email_verified = models.BooleanField(default=False)
+    phone_verified = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

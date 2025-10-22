@@ -61,9 +61,23 @@ if not SECRET_KEY or len(SECRET_KEY) < 50:
 
 INSTALLED_APPS = [
     "jazzmin",  # <- add this line
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
     # Local Apps
+    'apps.casino',
+    'apps.commissions',
+    'apps.riskengine',
+    'apps.fraud_aml',
+    'apps.reconciliation',
+    'apps.realtime',
+    'apps.reports',
+    'apps.cms',
+    'apps.dashboard',
+    'apps.jobs',
+    'apps.audit',
+    'apps.adminpanel',
     'apps.wallets',
     'apps.bets',
     'apps.agents',
@@ -87,13 +101,14 @@ SPORTS_API_BASE_URL = os.getenv('SPORTS_API_BASE_URL')
 # Jazzmin Admin Theme Settings
 JAZZMIN_SETTINGS = {
     # title of the window
-    "site_title": "VelkiList Admin",
+    "site_title": "BetLab Admin",
     # Title on the brand, and the login screen (19 chars max)
-    "site_header": "VelkiList",
+    "site_header": "BetLab Dashboard",
+    "site_brand": "BETLAB",
     # square logo to use for your site, must be present in static files
     "site_logo": None,
     # Welcome text on the login screen
-    "welcome_sign": "Welcome to VelkiList Admin",
+    "welcome_sign": "Welcome to BetLab Admin",
     # Copyright on the footer
     "copyright": "VelkiList Ltd",
     # The model admin to search from the search bar
@@ -105,9 +120,9 @@ JAZZMIN_SETTINGS = {
     ############
     # Links to put along the top menu
     "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Manage Bettors", "url": "/admin/users/user/"},
         {"model": "users.User"},
-        {"model": "sports.Game"},
     ],
     #############
     # Side Menu #
@@ -155,12 +170,23 @@ JAZZMIN_SETTINGS = {
         "users.user": "collapsible",
         "sports.game": "horizontal_tabs",
     },
+    "custom_css": "dashboard/css/custom.css",
+    "custom_js": "dashboard/js/custom.js",
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': os.getenv('DRF_THROTTLE_ANON', '100/day'),
+        'user': os.getenv('DRF_THROTTLE_USER', '1000/day'),
+    },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -177,14 +203,46 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', REDIS_URL)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULE = {
+    'sports-games-every-2h': {
+        'task': 'apps.sports.tasks.fetch_sports_games_task',
+        'schedule': 60 * 60 * 2,
+    },
+    'sports-odds-every-10m': {
+        'task': 'apps.sports.tasks.fetch_sports_odds_task',
+        'schedule': 60 * 10,
+    },
+    'sports-live-every-1m': {
+        'task': 'apps.sports.tasks.fetch_sports_live_task',
+        'schedule': 60,
+    },
+    'agent-commissions-daily': {
+        'task': 'apps.commissions.tasks.generate_agent_commissions_task',
+        'schedule': 60 * 60 * 24,
+    },
+    'risk-monitor-hourly': {
+        'task': 'apps.riskengine.tasks.risk_monitor_task',
+        'schedule': 60 * 60,
+    },
+    'backup-daily': {
+        'task': 'apps.jobs.tasks.backup_task',
+        'schedule': 60 * 60 * 24,
+    },
+}
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'config.middleware_security.IPBlockMiddleware',
+    'config.middleware_security.CountryRestrictionMiddleware',
+    'config.middleware_security.MaintenanceModeMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'config.middleware_audit.AdminAuditMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -194,7 +252,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'apps', 'adminpanel', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -245,13 +303,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
 USE_TZ = True
+
+# Multi-language support
+LANGUAGES = [
+    ('en', 'English'),
+    ('bn', 'Bengali'),
+]
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -273,7 +338,27 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
-# Celery / Redis configuration
-REDIS_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
-CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = REDIS_URL
+# (duplicate Celery config removed; see definitions above)
+
+# CORS
+CORS_ALLOWED_ORIGINS = [o for o in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if o]
+CORS_ALLOW_CREDENTIALS = True
+
+# drf-spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'VelkiList API',
+    'DESCRIPTION': 'Betting platform API',
+    'VERSION': '1.0.0',
+}
+
+# Currency configuration (BDT-first, extensible)
+SUPPORTED_CURRENCIES = [c for c in os.getenv('SUPPORTED_CURRENCIES', 'BDT,USD,EUR').split(',') if c]
+DEFAULT_CURRENCY = os.getenv('DEFAULT_CURRENCY', 'BDT')
+
+# Risk defaults (cents)
+RISK_MAX_STAKE_PER_BET_CENTS = int(os.getenv('RISK_MAX_STAKE_PER_BET_CENTS', '1000000'))  # 10,000.00
+RISK_MAX_DAILY_STAKE_CENTS = int(os.getenv('RISK_MAX_DAILY_STAKE_CENTS', '5000000'))      # 50,000.00
+
+# Provider toggles (documented here for clarity; used by adapters)
+CASINO_USE_DEMO = os.getenv('CASINO_USE_DEMO', '1') == '1'
+SPORTS_USE_DEMO = os.getenv('SPORTS_USE_DEMO', '1') == '1'
