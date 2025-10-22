@@ -105,7 +105,20 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <div class="kpi-label mb-2">{% trans 'Deposit vs Withdraw Report' %}</div>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="kpi-label">{% trans 'Deposit vs Withdraw Report' %}</div>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans 'More' %}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="{% url 'admin:payments_paymentintent_changelist' %}">{% trans 'View Deposits' %}</a>
+              <a class="dropdown-item" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">{% trans 'View Withdrawals' %}</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" onclick="location.reload(); return false;">{% trans 'Refresh' %}</a>
+            </div>
+          </div>
+        </div>
         <div class="chart-box"><canvas id="chartDepositsWithdraws"></canvas></div>
       </div>
     </div>
@@ -113,7 +126,19 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <div class="kpi-label mb-2">{% trans 'Transactions Report' %}</div>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="kpi-label">{% trans 'Transactions Report' %}</div>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans 'More' %}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="{% url 'admin:wallets_transaction_changelist' %}">{% trans 'View Transactions' %}</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" onclick="location.reload(); return false;">{% trans 'Refresh' %}</a>
+            </div>
+          </div>
+        </div>
         <div class="chart-box"><canvas id="chartTransactions"></canvas></div>
       </div>
     </div>
@@ -122,6 +147,18 @@
 
 <!-- Row: Donut charts -->
 <div class="row mt-3">
+  <div class="col-12 mb-2 d-flex align-items-center justify-content-between">
+    <div class="kpi-label mb-0">{% trans 'Login Analytics' %}</div>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {% trans 'More' %}
+      </button>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{% url 'admin:users_userdevice_changelist' %}">{% trans 'User Devices' %}</a>
+        <a class="dropdown-item" href="{% url 'admin:users_loginattempt_changelist' %}">{% trans 'Login Attempts' %}</a>
+      </div>
+    </div>
+  </div>
   <div class="col-12 col-md-4">
     <div class="card shadow-sm h-100">
       <div class="card-body">
