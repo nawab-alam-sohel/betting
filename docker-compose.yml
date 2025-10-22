@@ -11,11 +11,19 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U velki_user -d velkilist_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
-    build: .                        # ✅ Dockerfile use হবে
+    build: .
     container_name: velkilist-web
-    command: python manage.py runserver 0.0.0.0:8000
+    # Use image CMD (/entrypoint.sh) so migrations and prod/dev switching work
+    # command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - .env
     volumes:
       - .:/app
       - static_volume:/app/staticfiles 
@@ -23,25 +31,58 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   redis:
     image: redis:7
     container_name: velkilist-redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   worker:
     build: .
     container_name: velkilist-worker
     environment:
       - WORKER=1
+    env_file:
+      - .env
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - .:/app
+
+  frontend:
+    image: node:20-alpine
+    container_name: velkilist-frontend
+    working_dir: /app
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+      - INTERNAL_API_BASE_URL=http://web:8000
+      - CHOKIDAR_USEPOLLING=true
+      - PORT=3000
+    volumes:
+      - ./velkilist-frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      web:
+        condition: service_started
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  frontend_node_modules:
