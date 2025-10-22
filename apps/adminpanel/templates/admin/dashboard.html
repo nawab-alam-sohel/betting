@@ -173,15 +173,18 @@
       tension: 0.25,
       fill: false,
     });
-    const donutDataset = (items, label, colors) => ({
-      labels: items.map(i => i.browser || i.os_type || i.location || 'N/A'),
-      datasets: [{
-        label,
-        data: items.map(i => i.count || 0),
-        backgroundColor: colors,
-        hoverOffset: 4
-      }]
-    });
+    const donutDataset = (items, label, colors) => {
+      if (!items || !items.length) {
+        return {
+          labels: ['No Data'],
+          datasets: [{ label, data: [1], backgroundColor: ['#e5e7eb'], hoverOffset: 0 }]
+        };
+      }
+      const labels = items.map(i => (i.browser ?? i.os_type ?? i.location ?? 'N/A') || 'N/A');
+      const data = items.map(i => i.count || 0);
+      const palette = (colors || []).slice(0, data.length);
+      return { labels, datasets: [{ label, data, backgroundColor: palette.length ? palette : ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'] }] };
+    };
 
     const smallOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }}, scales: { x: { grid: { display:false } }, y: { grid: { color:'#eee' }, ticks: { callback: (v)=> v }}} };
     const donutOptions = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' }}};
