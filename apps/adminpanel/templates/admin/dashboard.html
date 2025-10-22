@@ -28,6 +28,11 @@
 
 <h1>{% trans 'Dashboard' %}</h1>
 
+<div class="row">
+  <div class="col-12 col-lg-9">
+
+<!-- KPIs Block A: Users & Games -->
+
 <!-- Row: KPI Cards -->
 <div class="row">
   <div class="col-6 col-md-3 col-xl-2">
@@ -98,6 +103,226 @@
         </div>
       </div>
   </div>
+  </div>
+
+<!-- Row: Games status KPIs -->
+<div class="row mt-3">
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:sports_game_changelist' %}?status__exact=live">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'In Play Games' %}</div>
+            <div class="kpi-value">{% stat_live_games %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:sports_game_changelist' %}?status__exact=scheduled">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Upcoming Games' %}</div>
+            <div class="kpi-value">{% stat_upcoming_games %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:sports_game_changelist' %}?status__exact=scheduled">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Open For Betting' %}</div>
+            <div class="kpi-value">{% stat_open_for_betting_games %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:sports_game_changelist' %}?status__exact=closed">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Not Open For Betting' %}</div>
+            <div class="kpi-value">{% stat_not_open_for_betting_games %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:users_user_changelist' %}?email_verified__exact=0">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Email Unverified Bettors' %}</div>
+            <div class="kpi-value">{% stat_email_unverified_users %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:users_user_changelist' %}?phone_verified__exact=0">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Mobile Unverified Bettors' %}</div>
+            <div class="kpi-value">{% stat_mobile_unverified_users %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+  <!-- Right Sidebar Menu -->
+  </div> <!-- end left column -->
+  <div class="col-12 col-lg-3 mt-3 mt-lg-0">
+    <div class="card shadow-sm" style="position: sticky; top: 10px;">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'MANAGE FINANCE' %}</div>
+        <div class="list-group mb-3">
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:payments_paymentintent_changelist' %}">{% trans 'Deposits' %}</a>
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">{% trans 'Withdrawals' %}</a>
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=pending">{% trans 'Pending Withdrawals' %}</a>
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=approved">{% trans 'Approved Withdrawals' %}</a>
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=rejected">{% trans 'Rejected Withdrawals' %}</a>
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:wallets_transaction_changelist' %}">{% trans 'All Transactions' %}</a>
+        </div>
+
+        <div class="kpi-label mb-2">{% trans 'SETTINGS' %}</div>
+        <div class="list-group mb-3">
+          <a class="list-group-item list-group-item-action" href="{% url 'admin:index' %}">{% trans 'System Settings' %}</a>
+        </div>
+
+        <div class="kpi-label mb-2">{% trans 'OTHERS' %}</div>
+        <div class="list-group">
+          <a class="list-group-item list-group-item-action" href="#reports">{% trans 'Report' %}</a>
+          <a class="list-group-item list-group-item-action" href="#reports">{% trans 'Report & Request' %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Row: Deposits/Withdrawals summary blocks -->
+<div class="row mt-3">
+  <div class="col-12 col-lg-6" id="deposit-section">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-3">{% trans 'Deposits' %}</div>
+        <div class="row">
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_paymentintent_changelist' %}" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Total Deposited' %}</div>
+              <div class="kpi-value">{{ sum_deposits_cents|default:0|cents_to_currency:"BDT" }}</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_paymentintent_changelist' %}?status__exact=pending" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Pending Deposits' %}</div>
+              <div class="kpi-value">{% stat_pending_deposits %}</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_paymentintent_changelist' %}?status__exact=failed" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Rejected Deposits' %}</div>
+              <div class="kpi-value">{% stat_rejected_deposits %}</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6" id="withdrawal-section">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-3">{% trans 'Withdrawals' %}</div>
+        <div class="row">
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_withdrawalrequest_changelist' %}" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Total Withdrawn' %}</div>
+              <div class="kpi-value">{{ sum_withdrawals_cents|default:0|cents_to_currency:"BDT" }}</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=pending" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Pending Withdrawals' %}</div>
+              <div class="kpi-value">{% stat_pending_withdrawals %}</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-4 mb-3">
+            <a href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=approved" class="text-decoration-none">
+              <div class="kpi-label">{% trans 'Approved Withdrawals' %}</div>
+              <div class="kpi-value">{% stat_approved_withdrawals %}</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Row: Pending items -->
+<div class="row mt-3">
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:bets_bet_changelist' %}?status__exact=placed">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Pending Bet' %}</div>
+            <div class="kpi-value">{% stat_pending_bets %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="#">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Pending Support Tickets' %}</div>
+            <div class="kpi-value">{% stat_pending_support_tickets %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:users_kycdocument_changelist' %}?status__exact=pending">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Pending KYC Verifications' %}</div>
+            <div class="kpi-value">{% stat_pending_kyc_documents %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:sports_game_changelist' %}?status__exact=ended">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Pending Outcomes' %}</div>
+            <div class="kpi-value">{% stat_pending_outcomes %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+  <!-- Right Sidebar Menu -->
+  
 </div>
 
 <!-- Row: Line charts -->
@@ -105,20 +330,7 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <div class="kpi-label">{% trans 'Deposit vs Withdraw Report' %}</div>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans 'More' %}
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a class="dropdown-item" href="{% url 'admin:payments_paymentintent_changelist' %}">{% trans 'View Deposits' %}</a>
-              <a class="dropdown-item" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">{% trans 'View Withdrawals' %}</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#" onclick="location.reload(); return false;">{% trans 'Refresh' %}</a>
-            </div>
-          </div>
-        </div>
+        <div class="kpi-label mb-2">{% trans 'Deposit vs Withdraw Report' %}</div>
         <div class="chart-box"><canvas id="chartDepositsWithdraws"></canvas></div>
       </div>
     </div>
@@ -126,19 +338,7 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <div class="kpi-label">{% trans 'Transactions Report' %}</div>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans 'More' %}
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a class="dropdown-item" href="{% url 'admin:wallets_transaction_changelist' %}">{% trans 'View Transactions' %}</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#" onclick="location.reload(); return false;">{% trans 'Refresh' %}</a>
-            </div>
-          </div>
-        </div>
+        <div class="kpi-label mb-2">{% trans 'Transactions Report' %}</div>
         <div class="chart-box"><canvas id="chartTransactions"></canvas></div>
       </div>
     </div>
@@ -147,18 +347,6 @@
 
 <!-- Row: Donut charts -->
 <div class="row mt-3">
-  <div class="col-12 mb-2 d-flex align-items-center justify-content-between">
-    <div class="kpi-label mb-0">{% trans 'Login Analytics' %}</div>
-    <div class="dropdown">
-      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {% trans 'More' %}
-      </button>
-      <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'admin:users_userdevice_changelist' %}">{% trans 'User Devices' %}</a>
-        <a class="dropdown-item" href="{% url 'admin:users_loginattempt_changelist' %}">{% trans 'Login Attempts' %}</a>
-      </div>
-    </div>
-  </div>
   <div class="col-12 col-md-4">
     <div class="card shadow-sm h-100">
       <div class="card-body">
@@ -185,17 +373,7 @@
   </div>
 </div>
 
-<!-- Row: Quick links -->
-<div class="row mt-3">
-  <div class="col-12">
-    <div class="d-flex flex-wrap">
-      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:payments_paymentintent_changelist' %}">{% trans 'Manage Deposits' %}</a>
-      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">{% trans 'Manage Withdrawals' %}</a>
-      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:users_user_changelist' %}">{% trans 'Manage Users' %}</a>
-      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:sports_game_changelist' %}">{% trans 'Manage Games' %}</a>
-    </div>
-  </div>
-</div>
+<!-- Quick links removed as per request: keep navigation on left sidebar only -->
 
 <!-- Chart.js and data loader -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
