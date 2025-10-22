@@ -149,30 +149,54 @@ class DashboardChartsView(APIView):
 
         # Login analytics (last 30 days)
         # LoginAttempt model doesn't store browser/os_type; use UserDevice as source for those.
-        device_qs = UserDevice.objects.filter(last_used__gte=start)
-        by_browser = list(device_qs.values('browser').annotate(count=Count('id')).order_by('-count')[:10])
-        by_os = list(device_qs.values('os_type').annotate(count=Count('id')).order_by('-count')[:10])
+        device_qs = (
+            UserDevice.objects
+            .filter(last_used__gte=start)
+            .exclude(browser__isnull=True).exclude(browser='')
+            .exclude(os_type__isnull=True).exclude(os_type='')
+        )
+        by_browser = list(
+            device_qs.values('browser').annotate(count=Count('id')).order_by('-count')[:10]
+        )
+        by_os = list(
+            device_qs.values('os_type').annotate(count=Count('id')).order_by('-count')[:10]
+        )
 
         # If no recent device activity, widen window then fall back to all-time
         if not by_browser or not by_os:
             start_180 = now - timedelta(days=180)
-            device_qs_wide = UserDevice.objects.filter(last_used__gte=start_180)
+            device_qs_wide = (
+                UserDevice.objects
+                .filter(last_used__gte=start_180)
+                .exclude(browser__isnull=True).exclude(browser='')
+                .exclude(os_type__isnull=True).exclude(os_type='')
+            )
             if not by_browser:
                 by_browser = list(device_qs_wide.values('browser').annotate(count=Count('id')).order_by('-count')[:10])
             if not by_os:
                 by_os = list(device_qs_wide.values('os_type').annotate(count=Count('id')).order_by('-count')[:10])
         if not by_browser:
-            by_browser = list(UserDevice.objects.values('browser').annotate(count=Count('id')).order_by('-count')[:10])
+            by_browser = list(
+                UserDevice.objects.exclude(browser__isnull=True).exclude(browser='')
+                .values('browser').annotate(count=Count('id')).order_by('-count')[:10]
+            )
         if not by_os:
-            by_os = list(UserDevice.objects.values('os_type').annotate(count=Count('id')).order_by('-count')[:10])
+            by_os = list(
+                UserDevice.objects.exclude(os_type__isnull=True).exclude(os_type='')
+                .values('os_type').annotate(count=Count('id')).order_by('-count')[:10]
+            )
 
         # Country/location can come from LoginAttempt, widen window/fallback to UserDevice if needed
-        login_qs = LoginAttempt.objects.filter(attempted_at__gte=start)
-        by_country = list(login_qs.values('location').annotate(count=Count('id')).order_by('-count')[:10])
+        login_qs = LoginAttempt.objects.filter(attempted_at__gte=start).exclude(location__isnull=True).exclude(location='')
+        by_country = list(
+            login_qs.values('location').annotate(count=Count('id')).order_by('-count')[:10]
+        )
         if not by_country:
             start_180 = now - timedelta(days=180)
-            login_qs_wide = LoginAttempt.objects.filter(attempted_at__gte=start_180)
-            by_country = list(login_qs_wide.values('location').annotate(count=Count('id')).order_by('-count')[:10])
+            login_qs_wide = LoginAttempt.objects.filter(attempted_at__gte=start_180).exclude(location__isnull=True).exclude(location='')
+            by_country = list(
+                login_qs_wide.values('location').annotate(count=Count('id')).order_by('-count')[:10]
+            )
         if not by_country:
             by_country = list(UserDevice.objects.values('location').annotate(count=Count('id')).order_by('-count')[:10])
 
