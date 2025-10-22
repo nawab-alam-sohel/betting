@@ -1,16 +1,16 @@
 from datetime import timedelta
 from django.utils import timezone
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 
 from apps.users.models import User
-from apps.wallets.models import Wallet, Transaction
+from apps.wallets.models import Transaction
 from apps.bets.models import Bet
 from apps.payments.models import PaymentIntent
 from apps.payments.models_recon import WithdrawalRequest
-from apps.users.models_kyc import KYCDocument, LoginAttempt
+from apps.users.models_kyc import KYCDocument, LoginAttempt, UserDevice
 from apps.sports.models import Game
 from apps.sports.models import SportsProvider
 from apps.casino.models import CasinoProvider
@@ -148,10 +148,15 @@ class DashboardChartsView(APIView):
         )
 
         # Login analytics (last 30 days)
+        # LoginAttempt model doesn't store browser/os_type; use UserDevice as source for those.
+        device_qs = UserDevice.objects.filter(last_used__gte=start)
+        by_browser = list(device_qs.values('browser').annotate(count=Count('id')).order_by('-count')[:10])
+        by_os = list(device_qs.values('os_type').annotate(count=Count('id')).order_by('-count')[:10])
+        # Country/location can come from LoginAttempt, fall back to UserDevice if needed
         login_qs = LoginAttempt.objects.filter(attempted_at__gte=start)
-        by_browser = list(login_qs.values('browser').annotate(count=Count('id')).order_by('-count')[:10])
-        by_os = list(login_qs.values('os_type').annotate(count=Count('id')).order_by('-count')[:10])
         by_country = list(login_qs.values('location').annotate(count=Count('id')).order_by('-count')[:10])
+        if not by_country:
+            by_country = list(device_qs.values('location').annotate(count=Count('id')).order_by('-count')[:10])
 
         data = {
             'deposits_daily': list(deposits),

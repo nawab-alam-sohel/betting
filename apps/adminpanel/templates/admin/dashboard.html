@@ -1,0 +1,226 @@
+{% load i18n static admin_urls admin_list admin_dashboard %}
+
+<style>
+  /* Trim vertical space while staying compatible with Jazzmin */
+  .content, .container, .content-wrapper { min-height: auto; }
+  #content { padding-bottom: 0; }
+  #content > h1 { margin-bottom: 12px; }
+
+  /* KPI typography */
+  .kpi-label { font-weight: 600; font-size: 0.85rem; opacity: .75; }
+  .kpi-value { font-weight: 700; font-size: 1.375rem; line-height: 1.25; }
+
+  /* Equal-height helpers */
+  .card.h-100 { height: 100%; }
+  .card-body.d-flex { display: flex; flex-direction: column; justify-content: center; }
+
+  /* Chart containers compact and responsive */
+  .chart-box { position: relative; height: 260px; }
+  .chart-box canvas { position:absolute; inset:0; width:100% !important; height:100% !important; }
+
+  /* Spacing between dashboard and app list to avoid overlap */
+  #app-list { margin-top: 20px; clear: both; }
+  #app-list .module { width: 100%; }
+  #app-list .module table { width: 100%; }
+
+  /* Respect dark theme: no hard-coded backgrounds here */
+</style>
+
+<h1>{% trans 'Dashboard' %}</h1>
+
+<!-- Row: KPI Cards -->
+<div class="row">
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:users_user_changelist' %}">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Total Bettors' %}</div>
+            <div class="kpi-value">{% stat_total_users %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:users_user_changelist' %}?is_active__exact=1">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Active Bettors' %}</div>
+            <div class="kpi-value">{% stat_active_users %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:bets_bet_changelist' %}?status__exact=placed">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Pending Bets' %}</div>
+            <div class="kpi-value">{% stat_pending_bets %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+    <a class="text-decoration-none" href="{% url 'admin:payments_withdrawalrequest_changelist' %}?status__exact=pending">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Withdraw Requests' %}</div>
+            <div class="kpi-value">{% stat_pending_withdrawals %}</div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Total Deposits (completed)' %}</div>
+            <div class="kpi-value">{{ sum_deposits_cents|default:0|cents_to_currency:"BDT" }}</div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-6 col-md-3 col-xl-2">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-start">
+          <div>
+            <div class="kpi-label">{% trans 'Total Withdrawals (completed)' %}</div>
+            <div class="kpi-value">{{ sum_withdrawals_cents|default:0|cents_to_currency:"BDT" }}</div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+<!-- Row: Line charts -->
+<div class="row mt-3">
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'Deposit vs Withdraw Report' %}</div>
+        <div class="chart-box"><canvas id="chartDepositsWithdraws"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'Transactions Report' %}</div>
+        <div class="chart-box"><canvas id="chartTransactions"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Row: Donut charts -->
+<div class="row mt-3">
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'Login by Browser' %}</div>
+        <div class="chart-box" style="height: 220px"><canvas id="chartBrowser"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'Login by OS' %}</div>
+        <div class="chart-box" style="height: 220px"><canvas id="chartOS"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="kpi-label mb-2">{% trans 'Login by Country' %}</div>
+        <div class="chart-box" style="height: 220px"><canvas id="chartCountry"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Row: Quick links -->
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="d-flex flex-wrap">
+      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:payments_paymentintent_changelist' %}">{% trans 'Manage Deposits' %}</a>
+      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">{% trans 'Manage Withdrawals' %}</a>
+      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:users_user_changelist' %}">{% trans 'Manage Users' %}</a>
+      <a class="btn btn-outline-secondary btn-sm mr-2 mb-2" href="{% url 'admin:sports_game_changelist' %}">{% trans 'Manage Games' %}</a>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js and data loader -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  (function(){
+    const el = (id) => document.getElementById(id);
+    const toLineDataset = (rows, label, color) => ({
+      label,
+      data: rows.map(r => r.total_cents ? r.total_cents/100.0 : 0),
+      borderColor: color,
+      backgroundColor: color,
+      tension: 0.25,
+      fill: false,
+    });
+    const donutDataset = (items, label, colors) => ({
+      labels: items.map(i => i.browser || i.os_type || i.location || 'N/A'),
+      datasets: [{
+        label,
+        data: items.map(i => i.count || 0),
+        backgroundColor: colors,
+        hoverOffset: 4
+      }]
+    });
+
+    const smallOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom' }}, scales: { x: { grid: { display:false } }, y: { grid: { color:'#eee' }, ticks: { callback: (v)=> v }}} };
+    const donutOptions = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' }}};
+
+    fetch('/api/admin/dashboard/charts/')
+      .then(r => r.json())
+      .then(data => {
+        const labels = (data.deposits_daily || []).map(r => r.day);
+        if (el('chartDepositsWithdraws')) {
+          new Chart(el('chartDepositsWithdraws'), {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [
+                toLineDataset(data.deposits_daily || [], 'Deposits', '#10b981'),
+                toLineDataset(data.withdraws_daily || [], 'Withdrawals', '#ef4444'),
+              ]
+            },
+            options: smallOptions
+          });
+        }
+        if (el('chartTransactions')) {
+          new Chart(el('chartTransactions'), {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [
+                toLineDataset(data.transactions_plus_daily || [], '+ Transactions', '#3b82f6'),
+                toLineDataset(data.transactions_minus_daily || [], '- Transactions', '#f59e0b'),
+              ]
+            },
+            options: smallOptions
+          });
+        }
+        const palette = ['#6366f1','#22c55e','#f59e0b','#06b6d4','#ef4444','#a855f7','#84cc16','#eab308'];
+        if (el('chartBrowser')) new Chart(el('chartBrowser'), { type:'doughnut', data: donutDataset(data.login_by_browser || [], 'Browsers', palette), options: donutOptions });
+        if (el('chartOS')) new Chart(el('chartOS'), { type:'doughnut', data: donutDataset(data.login_by_os || [], 'OS', palette), options: donutOptions });
+        if (el('chartCountry')) new Chart(el('chartCountry'), { type:'doughnut', data: donutDataset(data.login_by_country || [], 'Country', palette), options: donutOptions });
+      })
+      .catch(() => { /* fail silent */ });
+  })();
+</script>

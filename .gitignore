@@ -39,3 +39,4 @@ docker-compose.override.yml
 
 # Others
 node_modules/
+velkilist-frontend/.next/
