@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_dashboard %}
+
+{% block content %}
+<div class="content-wrapper" style="background: transparent;">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6"><h1 class="m-0">{% trans 'Deposit Via' %} {{ obj.get_provider_display }}</h1></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-3">
+          <div class="card shadow-sm h-100">
+            <div class="card-header font-weight-bold">{% trans 'Deposit Details' %}</div>
+            <div class="card-body">
+              <table class="table table-sm mb-0">
+                <tr><th>{% trans 'Date' %}</th><td>{{ obj.created_at|date:'Y-m-d h:i A' }}</td></tr>
+                <tr><th>{% trans 'Transaction Number' %}</th><td>{{ obj.reference|default:'—' }}</td></tr>
+                <tr><th>{% trans 'Username' %}</th><td>{{ obj.user.email }}</td></tr>
+                <tr><th>{% trans 'Method' %}</th><td>{{ obj.get_provider_display }}</td></tr>
+                <tr><th>{% trans 'Amount' %}</th><td>{{ obj.amount_cents|cents_to_currency:obj.currency }}</td></tr>
+                <tr><th>{% trans 'Charge' %}</th><td>{{ 0|cents_to_currency:obj.currency }}</td></tr>
+                <tr><th>{% trans 'After Charge' %}</th><td>{{ obj.amount_cents|cents_to_currency:obj.currency }}</td></tr>
+                <tr><th>{% trans 'Rate' %}</th><td>1 {{ obj.currency }} = 1.00 {{ obj.currency }}</td></tr>
+                <tr><th>{% trans 'After Rate Conversion' %}</th><td>{{ obj.amount_cents|cents_to_currency:obj.currency }}</td></tr>
+                <tr><th>{% trans 'Status' %}</th><td><span class="badge badge-warning">Pending</span></td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+          <div class="card shadow-sm h-100">
+            <div class="card-header font-weight-bold">{% trans 'User Deposit Information' %}</div>
+            <div class="card-body">
+              <p class="mb-3">{{ obj.user.get_full_name|default:obj.user.email }}</p>
+              {% if demo %}
+                <button class="btn btn-success mr-2" disabled><i class="fas fa-check mr-1"></i> {% trans 'Approve' %}</button>
+                <button class="btn btn-danger" disabled><i class="fas fa-times mr-1"></i> {% trans 'Reject' %}</button>
+              {% else %}
+                <form method="post" class="d-inline">{% csrf_token %}
+                  <input type="hidden" name="action" value="approve"/>
+                  <button class="btn btn-success mr-2"><i class="fas fa-check mr-1"></i> {% trans 'Approve' %}</button>
+                </form>
+                <form method="post" class="d-inline">{% csrf_token %}
+                  <input type="hidden" name="action" value="reject"/>
+                  <button class="btn btn-danger"><i class="fas fa-times mr-1"></i> {% trans 'Reject' %}</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

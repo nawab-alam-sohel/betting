@@ -165,3 +165,16 @@ class Selection(models.Model):
             else:
                 self.american_odds = int(-100 / (self.odds - 1))
         super().save(*args, **kwargs)
+
+
+class SportsProvider(models.Model):
+    """External sports data provider configuration (demo vs real)."""
+    key = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    base_url = models.URLField(blank=True)
+    config = models.JSONField(default=dict, blank=True)
+    active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name

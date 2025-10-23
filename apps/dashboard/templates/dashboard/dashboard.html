@@ -1,0 +1,88 @@
+{% load static %}
+
+<script>
+  // Dummy data for now; replace with real API payloads later
+  window.BETLAB_DASHBOARD_DATA = {
+    cards: {
+      total_bettors: 4366,
+      active_bettors: 4365,
+      upcoming_games: 780,
+      open_for_betting: 7584,
+      pending_bets: 91,
+      withdraw_requests: 123,
+    },
+    charts: {
+      deposit_withdraw: {
+        labels: ["10/08", "10/09", "10/10", "10/11", "10/12", "10/13", "10/14", "10/15", "10/16", "10/17", "10/18", "10/19", "10/20", "10/21", "10/22"],
+        deposited: [2,1.7,1.6,1.4,1.2,1.8,1.9,1.7,1.6,1.2,1.1,1.3,1.5,1.8,2.0],
+        withdrawn: [0.5,0.6,0.4,0.8,0.6,0.7,0.5,0.4,0.6,0.5,0.7,0.8,0.6,0.7,0.9],
+      },
+      transactions: {
+        labels: ["10/08", "10/09", "10/10", "10/11", "10/12", "10/13", "10/14", "10/15", "10/16", "10/17", "10/18", "10/19", "10/20", "10/21", "10/22"],
+        plus: [18, 2, 3, 5, 6, 7, 8, 9, 10, 5, 8, 11, 13, 15, 18],
+        minus: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      },
+      login_browser: { labels: ["Chrome", "Safari", "Firefox", "Edge"], values: [60, 25, 10, 5] },
+      login_os: { labels: ["Windows", "Android", "iOS", "macOS"], values: [45, 35, 10, 10] },
+      login_country: { labels: ["BD", "IN", "PH", "PK"], values: [70, 15, 10, 5] },
+    }
+  }
+</script>
+
+<div class="betlab-wrapper px-2 md:px-3">
+  <!-- Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bet-card bg-pastel-blue">
+      <div class="label">Total Bettors</div>
+      <div class="value" id="card-total-bettors">0</div>
+    </div>
+    <div class="bet-card bg-pastel-green">
+      <div class="label">Active Bettors</div>
+      <div class="value" id="card-active-bettors">0</div>
+    </div>
+    <div class="bet-card bg-pastel-yellow">
+      <div class="label">Upcoming Games</div>
+      <div class="value" id="card-upcoming-games">0</div>
+    </div>
+    <div class="bet-card bg-pastel-cyan">
+      <div class="label">Open for Betting</div>
+      <div class="value" id="card-open-for-betting">0</div>
+    </div>
+    <div class="bet-card bg-pastel-pink">
+      <div class="label">Pending Bets</div>
+      <div class="value" id="card-pending-bets">0</div>
+    </div>
+    <div class="bet-card bg-pastel-violet">
+      <div class="label">Withdraw Requests</div>
+      <div class="value" id="card-withdraw-requests">0</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div class="panel">
+      <div class="panel-title">Deposit & Withdraw Report</div>
+      <canvas id="chart-deposit-withdraw" height="120"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Transactions Report</div>
+      <canvas id="chart-transactions" height="120"></canvas>
+    </div>
+  </div>
+
+  <!-- Donuts row -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+    <div class="panel">
+      <div class="panel-title">Login By Browser (Last 30 days)</div>
+      <canvas id="donut-browser" height="180"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Login By OS (Last 30 days)</div>
+      <canvas id="donut-os" height="180"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Login By Country (Last 30 days)</div>
+      <canvas id="donut-country" height="180"></canvas>
+    </div>
+  </div>
+</div>

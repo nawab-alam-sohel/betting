@@ -1,0 +1,7 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls admin_list %}
+
+{% block content %}
+  {# BetLab-style dashboard only; navigation is provided by Jazzmin sidebar #}
+  {% include 'admin/dashboard.html' %}
+{% endblock %}

@@ -1,0 +1,34 @@
+/* Jazzmin/AdminLTE header + sidebar tailoring to match BetLab */
+.main-header.navbar { background: #0b1a3a !important; border-bottom: none; }
+.navbar .navbar-nav .nav-link, .main-header .navbar-nav .nav-link, .navbar .form-control { color: #e5e7eb !important; }
+.main-sidebar { background: linear-gradient(180deg, #0b1a3a 0%, #1f2d6b 100%) !important; }
+.nav-sidebar .nav-item > .nav-link.active { background-color: #635BFF !important; color: #fff !important; }
+.nav-sidebar .nav-item > .nav-link { color: #e5e7eb !important; }
+.brand-link { background: transparent !important; border-bottom: none !important; }
+
+/* BETLAB badge in sidebar footer */
+.betlab-version { position: absolute; left: 14px; bottom: 10px; color: #7dd3fc; font-weight: 700; font-size: 12px; opacity: .9; }
+
+/* Card and panel helpers (Tailwind-like, simplified) */
+.bet-card { border-radius: 12px; padding: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.06); border: 1px solid rgba(0,0,0,.06); }
+.bet-card .label { color: #6b7280; font-weight: 600; font-size: 12px; }
+.bet-card .value { font-weight: 800; font-size: 24px; margin-top: 6px; }
+.panel { border-radius: 12px; padding: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.06); border: 1px solid rgba(0,0,0,.06); background: #ffffff; }
+.panel .panel-title { font-weight: 600; color: #374151; margin-bottom: 10px; }
+
+/* Pastel backgrounds */
+.bg-pastel-blue { background: #f0f8ff; }
+.bg-pastel-green { background: #eafaf1; }
+.bg-pastel-yellow { background: #fef9e7; }
+.bg-pastel-cyan { background: #f0fdfd; }
+.bg-pastel-pink { background: #fff6f6; }
+.bg-pastel-violet { background: #f5f3ff; }
+
+/* Utility grid if Tailwind CDN not loaded */
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1,minmax(0,1fr)); }
+@media (min-width:768px){ .md\:grid-cols-2 { grid-template-columns: repeat(2,minmax(0,1fr)); } .md\:grid-cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+.gap-4 { gap: 1rem; }
+.mt-4 { margin-top: 1rem; }
+.px-2 { padding-left: .5rem; padding-right: .5rem; }
+@media (min-width:768px){ .md\:px-3 { padding-left: .75rem; padding-right: .75rem; } }

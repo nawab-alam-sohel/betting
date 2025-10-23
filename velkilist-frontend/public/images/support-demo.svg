@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220" />
+      <stop offset="50%" stop-color="#0e1730" />
+      <stop offset="100%" stop-color="#0b1220" />
+    </linearGradient>
+    <radialGradient id="r" cx="70%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#3b82f6" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1440" height="900" fill="url(#g)" />
+  <circle cx="1100" cy="200" r="300" fill="url(#r)" />
+  <circle cx="200" cy="700" r="260" fill="url(#r)" />
+  <g opacity="0.06" fill="#fff">
+    <path d="M0 820h1440v10H0zM0 780h1440v10H0zM0 740h1440v10H0zM0 700h1440v10H0zM0 660h1440v10H0z"/>
+  </g>
+  <text x="40" y="860" fill="#8aa2ff" font-family="Segoe UI,Verdana,Arial" font-size="16" opacity="0.4">Replace this with your real support background image</text>
+</svg>

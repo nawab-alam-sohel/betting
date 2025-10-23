@@ -88,9 +88,14 @@ class MarketViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Market.objects.filter(status='active')\
+        queryset = Market.objects.filter(status='active')\
             .select_related('game')\
             .prefetch_related('selections')
+
+        game_id = self.request.query_params.get('game')
+        if game_id:
+            queryset = queryset.filter(game_id=game_id)
+        return queryset
 
 
 class BetSlipValidationView(viewsets.ViewSet):

@@ -5,7 +5,9 @@ from rest_framework import status
 from django.db import transaction
 from apps.wallets.models import Wallet, Transaction
 from apps.bets.api.serializers import PlaceBetSerializer
+from decimal import Decimal, ROUND_DOWN
 from apps.bets.models import Bet, BetLine
+from apps.riskengine.services import check_bet
 
 
 class PlaceBetView(APIView):
@@ -17,20 +19,28 @@ class PlaceBetView(APIView):
         serializer.is_valid(raise_exception=True)
         lines = serializer.validated_data['lines']
 
-        # calculate total stake
+        # calculate totals using Decimal to avoid precision issues
         total_stake_cents = 0
         potential_win_cents = 0
         for l in lines:
-            stake = int(float(l['stake']) * 100)
-            odds = float(l['odds'])
-            total_stake_cents += stake
-            potential_win_cents += int(stake * odds)
+            stake_dec = Decimal(l['stake'])
+            odds_dec = Decimal(l['odds'])
+            stake_cents = int((stake_dec * 100).to_integral_value(rounding=ROUND_DOWN))
+            total_stake_cents += stake_cents
+            # potential win per line: stake * odds, rounded down to cents
+            win_cents = int((stake_dec * odds_dec * 100).to_integral_value(rounding=ROUND_DOWN))
+            potential_win_cents += win_cents
 
         # lock wallet row for update
         try:
             wallet = Wallet.objects.select_for_update().get(user=request.user)
         except Wallet.DoesNotExist:
             return Response({'detail': 'Wallet not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # risk checks
+        risk = check_bet(request.user, total_stake_cents)
+        if not risk.get('allowed'):
+            return Response({'detail': 'risk_denied', 'reasons': risk.get('reasons')}, status=status.HTTP_400_BAD_REQUEST)
 
         available = wallet.balance_cents - wallet.reserved_balance_cents
         if available < total_stake_cents:
@@ -53,10 +63,41 @@ class PlaceBetView(APIView):
                 market=l['market'],
                 selection=l['selection'],
                 odds=l['odds'],
-                stake_cents=int(float(l['stake']) * 100),
+                stake_cents=int((Decimal(l['stake']) * 100).to_integral_value(rounding=ROUND_DOWN)),
             )
 
         return Response({'bet_id': bet.id, 'status': 'placed'}, status=status.HTTP_201_CREATED)
+
+
+class QuoteBetView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = PlaceBetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        lines = serializer.validated_data['lines']
+
+        total_stake_cents = 0
+        potential_win_cents = 0
+        for l in lines:
+            stake_dec = Decimal(l['stake'])
+            odds_dec = Decimal(l['odds'])
+            stake_cents = int((stake_dec * 100).to_integral_value(rounding=ROUND_DOWN))
+            total_stake_cents += stake_cents
+            win_cents = int((stake_dec * odds_dec * 100).to_integral_value(rounding=ROUND_DOWN))
+            potential_win_cents += win_cents
+
+        # run risk check on quote too so UI can warn early
+        risk = check_bet(request.user, total_stake_cents)
+
+        return Response({
+            'total_stake': f"{total_stake_cents/100:.2f}",
+            'potential_win': f"{potential_win_cents/100:.2f}",
+            'total_stake_cents': total_stake_cents,
+            'potential_win_cents': potential_win_cents,
+            'risk_allowed': risk.get('allowed'),
+            'risk_reasons': risk.get('reasons'),
+        })
 
 
 class MyBetsView(APIView):

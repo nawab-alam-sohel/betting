@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NotificationLog, InAppNotification
+from apps.notifications.models import NotificationLog, InAppNotification
 
 
 class NotificationLogSerializer(serializers.ModelSerializer):

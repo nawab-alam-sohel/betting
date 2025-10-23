@@ -24,7 +24,8 @@ def settle_bet_task(self, bet_id):
             # deduct reserved stake and balance
             wallet.finalize_reservation(bet.total_stake_cents)
 
-            # credit win amount
+            # credit win amount (placeholder demo logic: mark as 'won')
+            bet.result = 'won'
             if bet.potential_win_cents > 0:
                 wallet.balance_cents += bet.potential_win_cents
                 wallet.save(update_fields=['balance_cents'])

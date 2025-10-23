@@ -1,6 +1,8 @@
+import os
 import requests
 
-BASE = 'http://web:8000'
+# Allow overriding the base URL; default works inside Docker network
+BASE = os.getenv('SMOKE_BASE', 'http://web:8000')
 
 ENDPOINTS = [
     '/api/payments/providers/',
