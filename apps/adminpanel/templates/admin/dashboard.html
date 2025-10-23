@@ -373,7 +373,62 @@
   </div>
 </div>
 
-<!-- Quick links removed as per request: keep navigation on left sidebar only -->
+<!-- System Settings (BETLAB-style cards) -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="kpi-label mb-2">SETTINGS</div>
+  </div>
+  <div class="col-6 col-lg-3 mb-3">
+    <div class="card settings-card shadow-sm h-100">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <div class="kpi-label mb-1">Site Settings</div>
+          <div class="text-muted small">Title, GA, Pixel, SEO</div>
+        </div>
+        <button class="btn btn-sm btn-primary" data-open-modal data-url="/admin/system/site-settings/"><i class="fas fa-sliders-h"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3 mb-3">
+    <a class="text-decoration-none" href="{% url 'admin:payments_paymentprovider_changelist' %}">
+      <div class="card settings-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="kpi-label mb-1">Payment Gateways</div>
+            <div class="text-muted small">Manual provider numbers</div>
+          </div>
+          <span class="settings-icon bg-light"><i class="fas fa-plug"></i></span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3 mb-3">
+    <a class="text-decoration-none" href="{% url 'admin:payments_withdrawalrequest_changelist' %}">
+      <div class="card settings-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="kpi-label mb-1">Withdrawals</div>
+            <div class="text-muted small">Approve / Reject</div>
+          </div>
+          <span class="settings-icon bg-light"><i class="fas fa-arrow-circle-up"></i></span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3 mb-3">
+    <a class="text-decoration-none" href="{% url 'admin:cms_sitesetting_changelist' %}">
+      <div class="card settings-card shadow-sm h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="kpi-label mb-1">SEO & Frontend</div>
+            <div class="text-muted small">Meta, Home content</div>
+          </div>
+          <span class="settings-icon bg-light"><i class="fas fa-cog"></i></span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
 
 <!-- Chart.js and data loader -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
