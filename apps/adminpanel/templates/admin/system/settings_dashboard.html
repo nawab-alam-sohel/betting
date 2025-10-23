@@ -1,0 +1,111 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1 class="mb-3">{% trans "System Settings" %}</h1>
+
+  <div class="row">
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'General Setting' %}</div>
+            <div class="text-muted small">Site, SEO, Basic</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:site_settings_form' %}" title="{% trans 'Edit' %}"><i class="fas fa-sliders-h"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'SEO Configuration' %}</div>
+            <div class="text-muted small">Meta, OpenGraph</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:seo_settings_form' %}"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'Payment Gateway' %}</div>
+            <div class="text-muted small">Providers & config</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:payment_settings_form' %}"><i class="fas fa-plug"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'Social Login' %}</div>
+            <div class="text-muted small">Google, Facebook</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:social_settings_form' %}"><i class="fas fa-share-alt"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'Language' %}</div>
+            <div class="text-muted small">Default & supported</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:language_settings_form' %}"><i class="fas fa-language"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'Extensions' %}</div>
+            <div class="text-muted small">Feature toggles</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:extension_settings_form' %}"><i class="fas fa-puzzle-piece"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <div class="font-weight-bold">{% trans 'Cron Jobs' %}</div>
+            <div class="text-muted small">Schedules</div>
+          </div>
+          <button class="btn btn-sm btn-primary" data-open-modal data-url="{% url 'adminpanel:cron_settings_form' %}"><i class="fas fa-clock"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal container -->
+  <div class="modal fade" id="systemModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{% trans 'Edit Settings' %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="system-modal-body">
+          <div class="text-muted small">{% trans 'Loading…' %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

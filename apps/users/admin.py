@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 from .models import Role, User
 from .models_kyc import KYCDocument, KYCProfile, LoginAttempt, UserDevice
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -23,6 +24,72 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {'classes': ('wide',), 'fields': ('email', 'password1', 'password2', 'role', 'email_verified', 'phone_verified', 'is_banned', 'is_staff', 'is_active')}),
     )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        user = request.user
+        try:
+            role_slug = user.role.slug if user.role else None
+        except Exception:
+            role_slug = None
+        # Super Admin sees all
+        if user.is_superuser or role_slug == 'superadmin':
+            return qs
+        # Admin cannot see Super Admins
+        if role_slug == 'admin':
+            return qs.exclude(Q(is_superuser=True) | Q(role__slug='superadmin'))
+        # Agent: only see own downline/clients (direct clients)
+        if role_slug == 'agent':
+            agent_profile = getattr(user, 'agent_profile', None)
+            if agent_profile:
+                return qs.filter(agent=agent_profile)
+            return qs.none()
+        # Others: no access in admin
+        return qs.none()
+
+    def has_add_permission(self, request):
+        user = request.user
+        role_slug = getattr(getattr(user, 'role', None), 'slug', None)
+        if user.is_superuser or role_slug == 'superadmin':
+            return True
+        if role_slug == 'admin':
+            return True
+        if role_slug == 'agent':
+            # Agents can add user accounts only
+            return True
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        user = request.user
+        role_slug = getattr(getattr(user, 'role', None), 'slug', None)
+        if user.is_superuser or role_slug == 'superadmin':
+            return True
+        if obj:
+            if role_slug == 'admin' and (obj.is_superuser or getattr(getattr(obj, 'role', None), 'slug', None) == 'superadmin'):
+                return False
+            if role_slug == 'agent':
+                agent_profile = getattr(user, 'agent_profile', None)
+                return agent_profile and obj.agent_id == agent_profile.id
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        # Mirror change permission
+        return self.has_change_permission(request, obj)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        # Limit Role choices based on actor role
+        user = request.user
+        role_slug = getattr(getattr(user, 'role', None), 'slug', None)
+        if 'role' in form.base_fields:
+            role_field = form.base_fields['role']
+            if user.is_superuser or role_slug == 'superadmin':
+                pass
+            elif role_slug == 'admin':
+                role_field.queryset = Role.objects.exclude(slug='superadmin')
+            elif role_slug == 'agent':
+                role_field.queryset = Role.objects.filter(slug__in=['user'])
+        return form
 
 admin.site.register(User, UserAdmin)
 

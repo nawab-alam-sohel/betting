@@ -1,3 +1,153 @@
-.settings-card { transition: box-shadow .15s ease, transform .15s ease; }
+:root {
+	--brand-primary: #635BFF; /* BetLab-like purple */
+	--brand-success: #22c55e;
+	--brand-warning: #f59e0b;
+	--brand-info: #06b6d4;
+	--brand-danger: #ef4444;
+    /* Admin chrome (top bar + left sidebar) */
+    --admin-chrome-bg: #1f2a44; /* deep navy */
+    --admin-chrome-fg: #e5e7eb; /* light text */
+}
+
+.settings-card { transition: box-shadow .15s ease, transform .15s ease; border: 1px solid rgba(0,0,0,.05); }
 .settings-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
-.settings-icon { font-size: 20px; width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; }
+.settings-icon { font-size: 20px; width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; color: var(--brand-primary); }
+
+/* System Settings grid tiles */
+.settings-grid .settings-tile {
+	display: block;
+	border-radius: 12px;
+	border: 1px solid rgba(0,0,0,.06);
+	background: var(--card-bg, #fff);
+	height: 100%;
+	text-decoration: none;
+	transition: box-shadow .15s ease, transform .15s ease;
+}
+.settings-grid .settings-tile:hover {
+	box-shadow: 0 10px 24px rgba(0,0,0,.08);
+	transform: translateY(-2px);
+}
+.settings-grid .settings-tile .tile-body {
+	padding: 18px 16px;
+	display: flex;
+	gap: 14px;
+	align-items: center;
+}
+.settings-grid .tile-icon {
+	width: 56px;
+	height: 56px;
+	border-radius: 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--brand-primary);
+	color: #fff;
+	flex: 0 0 auto;
+	font-size: 22px;
+}
+.settings-grid .tile-text h5 {
+	margin: 0 0 4px;
+	font-weight: 700;
+	font-size: 1rem;
+}
+.settings-grid .tile-text p {
+	margin: 0;
+	color: #64748b;
+	font-size: .875rem;
+}
+
+/* Dashboard KPI tweaks */
+.kpi-label { color: #64748b; }
+.kpi-value { color: #0f172a; }
+
+/* Make list-group items slightly denser for the right sidebar */
+.list-group-item { padding: .5rem .75rem; }
+
+/* SPA left menu active state to match brand */
+.list-group-item.active {
+	background-color: var(--brand-primary) !important;
+	border-color: var(--brand-primary) !important;
+	color: #fff !important;
+}
+
+/* Unify top bar and left sidebar colors */
+.main-header.navbar,
+.main-header .navbar {
+	background-color: var(--admin-chrome-bg) !important;
+	color: var(--admin-chrome-fg) !important;
+}
+.main-header .navbar .nav-link,
+.main-header .navbar a,
+.main-header .navbar .navbar-nav .nav-link {
+	color: var(--admin-chrome-fg) !important;
+}
+.main-sidebar,
+.main-sidebar .sidebar,
+.brand-link {
+	background-color: var(--admin-chrome-bg) !important;
+	color: var(--admin-chrome-fg) !important;
+}
+.brand-link {
+	border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+.nav-sidebar .nav-link {
+	color: #cbd5e1 !important; /* slate-300 */
+}
+.nav-sidebar .nav-link:hover {
+	color: #ffffff !important;
+}
+.nav-sidebar > .nav-item .nav-link.active,
+.nav-sidebar .menu-open > .nav-link,
+.nav-sidebar .nav-link.active {
+	background-color: var(--brand-primary) !important;
+	color: #ffffff !important;
+}
+
+/* Pending Deposits header styling */
+table.pending-deposits thead { background: #3f51b5 !important; color: #fff; }
+table.pending-deposits thead th { border-color: rgba(255,255,255,0.15); font-weight: 600; }
+table.pending-deposits tbody td { vertical-align: middle; }
+
+/* Make admin content truly full width */
+.content .container-fluid,
+.content-header .container-fluid {
+	max-width: 100% !important;
+	width: 100% !important;
+}
+
+/* Pending deposits table layout: avoid horizontal scrolling */
+table.pending-deposits {
+	width: 100%;
+	table-layout: auto;
+}
+table.pending-deposits td div,
+table.pending-deposits th div,
+table.pending-deposits td {
+	white-space: normal;
+	word-break: break-word;
+}
+
+/* Paginator styling to match BetLab */
+.card .pagination .page-link {
+	border-radius: 12px;
+	border: 1px solid #e2e8f0;
+	color: #334155; /* slate-700 */
+	padding: .5rem .75rem;
+	margin: 0 4px;
+	background: #fff;
+}
+.card .pagination .page-item.active .page-link {
+	background: var(--brand-primary);
+	color: #fff;
+	border-color: var(--brand-primary);
+	box-shadow: 0 6px 16px rgba(99,91,255,.35);
+}
+.card .pagination .page-link:hover {
+	color: var(--brand-primary);
+	border-color: var(--brand-primary);
+}
+.card .pagination .page-item.disabled .page-link {
+	color: #94a3b8; /* slate-400 */
+	background: #f8fafc; /* slate-50 */
+}
+.pagination-stats { font-size: .875rem; }

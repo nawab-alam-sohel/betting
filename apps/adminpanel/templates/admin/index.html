@@ -2,43 +2,6 @@
 {% load i18n static admin_urls admin_list %}
 
 {% block content %}
-  {# Use namespaced path under admin to avoid conflict with apps/dashboard #}
+  {# BetLab-style dashboard only; navigation is provided by Jazzmin sidebar #}
   {% include 'admin/dashboard.html' %}
-
-  <div class="mt-4">
-    {% if app_list %}
-      <div id="app-list">
-        {% for app in app_list %}
-          <div class="module">
-            <table>
-              <caption>
-                <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
-              </caption>
-              <tbody>
-                {% for model in app.models %}
-                  <tr class="model-{{ model.object_name|lower }}">
-                    {% if model.admin_url %}
-                      <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
-                    {% else %}
-                      <th scope="row">{{ model.name }}</th>
-                    {% endif %}
-                    {% if model.add_url %}
-                      <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
-                    {% else %}
-                      <td>&nbsp;</td>
-                    {% endif %}
-                    {% if model.admin_url %}
-                      <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
-                    {% else %}
-                      <td>&nbsp;</td>
-                    {% endif %}
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  </div>
 {% endblock %}

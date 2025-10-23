@@ -1,0 +1,246 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper settings-grid" style="background: transparent;">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">System Settings</h1>
+          <p class="text-muted">Manage configuration for the platform in one place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        {% comment %} Payments {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:payments_paymentprovider_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-credit-card"></i></span>
+              <div class="tile-text">
+                <h5>Payment Gateways</h5>
+                <p>Configure automatic or manual gateways.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:payments_paymentprovider_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-university"></i></span>
+              <div class="tile-text">
+                <h5>Withdrawals Methods</h5>
+                <p>Setup manual withdrawal methods for payouts.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:users_kycdocument_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-id-card"></i></span>
+              <div class="tile-text">
+                <h5>KYC Setting</h5>
+                <p>Review and configure client verification.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Frontend & SEO {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_page_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fab fa-css3-alt"></i></span>
+              <div class="tile-text">
+                <h5>Manage Frontend</h5>
+                <p>Control all CMS pages and content.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_seosetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-globe"></i></span>
+              <div class="tile-text">
+                <h5>SEO Configuration</h5>
+                <p>Meta title, description, keywords.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_socialloginsetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-user-circle"></i></span>
+              <div class="tile-text">
+                <h5>Social Login Setting</h5>
+                <p>Configure Google & Facebook login.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Localization & Extensions {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_languagesetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-language"></i></span>
+              <div class="tile-text">
+                <h5>Language</h5>
+                <p>Default language and supported locales.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_extensionsetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-puzzle-piece"></i></span>
+              <div class="tile-text">
+                <h5>Extensions</h5>
+                <p>Enable sportsbook, casino, realtime, reports.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_cronjobsetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="far fa-clock"></i></span>
+              <div class="tile-text">
+                <h5>Cron Jobs</h5>
+                <p>Automate system operations.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Policies & Maintenance {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_page_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-shield-alt"></i></span>
+              <div class="tile-text">
+                <h5>Policy Pages</h5>
+                <p>Terms, privacy and other policies.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_sitesetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-tools"></i></span>
+              <div class="tile-text">
+                <h5>Maintenance Mode</h5>
+                <p>Enable or disable maintenance mode.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_gdprcookiesetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-cookie-bite"></i></span>
+              <div class="tile-text">
+                <h5>GDPR Cookie</h5>
+                <p>Cookie policy banner and settings.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Developer settings {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_sitesetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fab fa-css3"></i></span>
+              <div class="tile-text">
+                <h5>Custom CSS</h5>
+                <p>Add custom stylesheet overrides.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_seosetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-sitemap"></i></span>
+              <div class="tile-text">
+                <h5>Sitemap XML</h5>
+                <p>Manage or regenerate sitemap entries.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:cms_sitesetting_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-robot"></i></span>
+              <div class="tile-text">
+                <h5>Robots txt</h5>
+                <p>Edit robots.txt content for crawlers.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Security helpers {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:fraud_aml_countryrestriction_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-flag"></i></span>
+              <div class="tile-text">
+                <h5>Country Restrictions</h5>
+                <p>Block or allow by country.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:fraud_aml_ipblock_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-ban"></i></span>
+              <div class="tile-text">
+                <h5>IP Blocks</h5>
+                <p>Manage blocked IP addresses.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {% comment %} Notifications {% endcomment %}
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:notifications_emailtemplate_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-envelope-open-text"></i></span>
+              <div class="tile-text">
+                <h5>Email Templates</h5>
+                <p>Define email subjects and bodies.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4 col-lg-3 col-sm-6 mb-3">
+          <a class="settings-tile h-100" href="{% url 'admin:notifications_smstemplate_changelist' %}">
+            <div class="tile-body">
+              <span class="tile-icon"><i class="fas fa-sms"></i></span>
+              <div class="tile-text">
+                <h5>SMS Templates</h5>
+                <p>Message text with placeholders.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

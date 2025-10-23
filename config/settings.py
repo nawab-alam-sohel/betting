@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
+    'django.contrib.sitemaps',
     # Local Apps
     'apps.casino',
     'apps.commissions',
@@ -115,51 +116,124 @@ JAZZMIN_SETTINGS = {
     "search_model": "users.User",
     # Field name on user model that contains avatar image
     "user_avatar": None,
-    ############
-    # Top Menu #
-    ############
-    # Links to put along the top menu
-    "topmenu_links": [
-        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Manage Bettors", "url": "/admin/users/user/"},
-        {"model": "users.User"},
-    ],
+
     #############
     # Side Menu #
     #############
     # Whether to display the side menu
     "show_sidebar": True,
-    # Whether to aut expand the menu
-    "navigation_expanded": True,
+    # Collapse sidebar groups by default; click to expand (as requested)
+    "navigation_expanded": False,
+
     # Custom icons for side menu apps/models
     "icons": {
+        # Core
         "users": "fas fa-users",
         "users.user": "fas fa-user",
         "users.Role": "fas fa-user-tag",
+        # Sportsbook
+        "sports": "fas fa-trophy",
         "sports.Category": "fas fa-trophy",
         "sports.League": "fas fa-flag",
         "sports.Team": "fas fa-shield-alt",
         "sports.Game": "fas fa-futbol",
         "sports.Market": "fas fa-chart-line",
         "sports.Selection": "fas fa-check-circle",
+        # Betting & Wallet/Finance
+        "bets": "fas fa-ticket-alt",
         "bets.Bet": "fas fa-ticket-alt",
+        "wallets": "fas fa-wallet",
         "wallets.Wallet": "fas fa-wallet",
+        "wallets.Transaction": "fas fa-exchange-alt",
+        "payments": "fas fa-money-bill",
         "payments.PaymentIntent": "fas fa-money-bill",
-        "agents.Agent": "fas fa-user-tie",
+        "payments.WithdrawalRequest": "fas fa-money-check-alt",
+    # Payments filtered proxies
+    "payments.PaymentIntentPending": "fas fa-hourglass-half",
+    "payments.PaymentIntentCompleted": "fas fa-check-circle",
+    "payments.PaymentIntentFailed": "fas fa-times-circle",
+    "payments.WithdrawalRequestPending": "fas fa-hourglass-half",
+    "payments.WithdrawalRequestApproved": "fas fa-check-circle",
+    "payments.WithdrawalRequestRejected": "fas fa-times-circle",
+        # Compliance
+        "riskengine": "fas fa-shield-alt",
+        "fraud_aml": "fas fa-user-secret",
+        "reconciliation": "fas fa-balance-scale",
+        # Business
+        "agents": "fas fa-user-tie",
+        "commissions": "fas fa-percentage",
+        # Ops & comms
+        "notifications": "fas fa-bell",
+        "reports": "fas fa-chart-pie",
+        "cms": "fas fa-cogs",
+        "jobs": "fas fa-tasks",
+        "audit": "fas fa-clipboard-list",
+        # Notifications (specific models)
+        "notifications.SMSTemplate": "fas fa-sms",
+        "notifications.EmailTemplate": "fas fa-envelope",
+        "notifications.NotificationLog": "fas fa-paper-plane",
+        "notifications.InAppNotification": "fas fa-bell",
     },
+
+    # Side menu grouped similar to BetLab sections
+    "side_menu": [
+        {"label": "Dashboard", "icon": "fas fa-chart-line", "url": "/admin/"},
+
+        {"label": "Manage Bettors", "icon": "fas fa-users"},
+        {"app": "users"},
+        {"app": "agents"},
+
+        {"label": "Betting", "icon": "fas fa-ticket-alt"},
+        {"app": "bets"},
+
+        {"label": "Sports", "icon": "fas fa-trophy"},
+        {"app": "sports"},
+
+    {"label": "Manage Finance", "icon": "fas fa-money-bill"},
+    {"app": "payments"},
+    {"app": "wallets"},
+
+        {"label": "Casino", "icon": "fas fa-dice"},
+        {"app": "casino"},
+
+        {"label": "Compliance", "icon": "fas fa-shield-alt"},
+        {"app": "riskengine"},
+        {"app": "fraud_aml"},
+        {"app": "reconciliation"},
+
+        {"label": "Operations", "icon": "fas fa-cogs"},
+        {"app": "notifications"},
+        {"app": "jobs"},
+        {"app": "realtime"},
+        {"app": "audit"},
+
+        {"label": "Reports", "icon": "fas fa-chart-pie"},
+        {"app": "reports"},
+
+        {"label": "CMS", "icon": "fas fa-cogs"},
+        {"app": "cms"},
+
+        
+
+        {"label": "System Settings", "icon": "fas fa-sliders-h", "url": "/admin/system/settings/"},
+    ],
+
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
+
     #################
     # Related Modal #
     #################
     # Whether to show the plus/edit/delete links on the related modal
     "related_modal_active": True,
+
     #############
     # UI Tweaks #
     #############
     # Whether to show the UI customizer on the sidebar
     "show_ui_builder": True,
+
     ###############
     # Change view #
     ###############
@@ -170,12 +244,37 @@ JAZZMIN_SETTINGS = {
         "users.user": "collapsible",
         "sports.game": "horizontal_tabs",
     },
+
     "custom_css": "dashboard/css/custom.css",
     "custom_js": "dashboard/js/custom.js",
+    # Explicit ordering for apps/models in the sidebar
+    "order_with_respect_to": [
+        # Payments app dropdown ordering
+        "payments",
+        "payments.WithdrawalRequestApproved",
+        "payments.PaymentIntentCompleted",
+        "payments.PaymentIntentFailed",
+        "payments.PaymentIntent",
+        "payments.PaymentProvider",
+        "payments.PaymentIntentPending",
+        "payments.WithdrawalRequestPending",
+        "payments.ReconciliationBatch",
+        "payments.ReconciliationItem",
+        "payments.ReconciliationReport",
+        "payments.WithdrawalRequestRejected",
+        "payments.WithdrawalRequest",
+        # Notifications app dropdown ordering
+        "notifications",
+        "notifications.SMSTemplate",
+        "notifications.EmailTemplate",
+        "notifications.InAppNotification",
+        "notifications.NotificationLog",
+    ],
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_THROTTLE_CLASSES': [
@@ -252,7 +351,10 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'apps', 'adminpanel', 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'apps', 'adminpanel', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

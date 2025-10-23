@@ -1,0 +1,18 @@
+{% load i18n %}
+<form hx-post="{% url save_url %}" hx-target="#system-modal-body" hx-swap="innerHTML" enctype="multipart/form-data">
+  {% if title %}<h5 class="mb-3">{{ title }}</h5>{% endif %}
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form.visible_fields %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+      {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </div>
+  {% endfor %}
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">{% trans 'Close' %}</button>
+    <button type="submit" class="btn btn-primary">{% trans 'Save changes' %}</button>
+  </div>
+</form>

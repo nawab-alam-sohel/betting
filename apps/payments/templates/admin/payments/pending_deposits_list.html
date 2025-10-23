@@ -1,0 +1,116 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_dashboard %}
+
+{% block content %}
+<div class="content-wrapper" style="background: transparent;">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6"><h1 class="m-0">{% trans 'Pending Deposits' %}</h1></div>
+        <div class="col-sm-6">
+          <form method="get" class="form-inline float-sm-right">
+            <div class="input-group input-group-sm mr-2" style="min-width:260px;">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div>
+              <input type="text" name="q" value="{{ search_q }}" class="form-control" placeholder="Username / TRX"/>
+            </div>
+            <div class="input-group input-group-sm mr-2">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="far fa-calendar"></i></span></div>
+              <input type="date" name="start" value="{{ start }}" class="form-control"/>
+            </div>
+            <div class="input-group input-group-sm mr-2">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="far fa-calendar"></i></span></div>
+              <input type="date" name="end" value="{{ end }}" class="form-control"/>
+            </div>
+            <button class="btn btn-sm btn-primary" type="submit">{% trans 'Filter' %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Full-width Table -->
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <table class="table table-hover mb-0 pending-deposits w-100">
+                <thead class="bg-primary text-white">
+                  <tr>
+                    <th>{% trans 'Gateway | Transaction' %}</th>
+                    <th>{% trans 'Initiated' %}</th>
+                    <th>{% trans 'User' %}</th>
+                    <th>{% trans 'Amount' %}</th>
+                    <th>{% trans 'Conversion' %}</th>
+                    <th>{% trans 'Status' %}</th>
+                    <th class="text-right">{% trans 'Action' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obj in objects %}
+                    <tr>
+                      <td>
+                        <div class="font-weight-bold">{{ obj.get_provider_display }}</div>
+                        <div class="text-muted small">{{ obj.reference|default:'—' }}</div>
+                      </td>
+                      <td>
+                        <div>{{ obj.created_at|date:'Y-m-d h:i A' }}</div>
+                        <div class="text-muted small">{{ obj.created_at|timesince }} ago</div>
+                      </td>
+                      <td>
+                        <div class="font-weight-bold">{{ obj.user.get_full_name|default:obj.user.email }}</div>
+                        <div class="text-muted small">{{ obj.user.email }}</div>
+                      </td>
+                      <td>
+                        <div>{{ obj.amount_cents|cents_to_currency:obj.currency }} <span class="text-danger font-weight-bold">+ {{ 0|cents_to_currency:obj.currency|slice:"4:" }}</span></div>
+                        <div class="font-weight-bold">{{ obj.amount_cents|cents_to_currency:obj.currency }}</div>
+                      </td>
+                      <td>
+                        <div>1.00 {{ obj.currency }} = 1.00 {{ obj.currency }}</div>
+                        <div class="text-muted small">—</div>
+                      </td>
+                      <td>
+                        <span class="badge badge-warning">Pending</span>
+                      </td>
+                      <td class="text-right">
+                        {% if demo %}
+                          <a class="btn btn-sm btn-outline-primary" href="{% url 'admin:payments_paymentintentpending_demo_details' forloop.counter0 %}">{% trans 'Details' %}</a>
+                        {% else %}
+                          <a class="btn btn-sm btn-outline-primary" href="{% url 'admin:payments_paymentintentpending_details' obj.pk %}">{% trans 'Details' %}</a>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="99" class="text-center text-muted">No pending deposits</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer d-flex flex-column flex-md-row align-items-center justify-content-between">
+              <div class="pagination-stats text-muted mb-2 mb-md-0">
+                Showing {{ results_from }} to {{ results_to }} of {{ paginator.count }} results
+              </div>
+              <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                  <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                    <a class="page-link" aria-label="Previous" href="{% if page_obj.has_previous %}{% if base_qs %}?{{ base_qs }}&page={{ page_obj.previous_page_number }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}{% else %}#{% endif %}">‹</a>
+                  </li>
+                  {% for n in paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == n %}active{% endif %}">
+                      <a class="page-link" href="{% if base_qs %}?{{ base_qs }}&page={{ n }}{% else %}?page={{ n }}{% endif %}">{{ n }}</a>
+                    </li>
+                  {% endfor %}
+                  <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                    <a class="page-link" aria-label="Next" href="{% if page_obj.has_next %}{% if base_qs %}?{{ base_qs }}&page={{ page_obj.next_page_number }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}{% else %}#{% endif %}">›</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

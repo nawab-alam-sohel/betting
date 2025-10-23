@@ -136,3 +136,20 @@ def cents_to_currency(value, currency='BDT'):
         cents = 0
     amount = cents / 100.0
     return f"{currency} {amount:,.2f}"
+
+
+@register.filter(name='has_role')
+def has_role(user, slug: str):
+    try:
+        return bool(user and getattr(getattr(user, 'role', None), 'slug', None) == slug)
+    except Exception:
+        return False
+
+
+@register.filter(name='has_min_level')
+def has_min_level(user, level: int):
+    try:
+        role = getattr(user, 'role', None)
+        return bool(role and getattr(role, 'level', 0) >= int(level))
+    except Exception:
+        return False
