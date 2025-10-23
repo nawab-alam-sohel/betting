@@ -1,0 +1,24 @@
+{% load i18n %}
+<form hx-post="{% url 'adminpanel:site_settings_save' %}" hx-target="#system-modal-body" hx-swap="innerHTML">
+  <div class="form-row">
+    <div class="form-group col-md-6">{{ form.site_name.label_tag }} {{ form.site_name }}</div>
+    <div class="form-group col-md-3">{{ form.default_locale.label_tag }} {{ form.default_locale }}</div>
+    <div class="form-group col-md-3">{{ form.maintenance_mode.label_tag }} {{ form.maintenance_mode }}</div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">{{ form.ga_measurement_id.label_tag }} {{ form.ga_measurement_id }}</div>
+    <div class="form-group col-md-6">{{ form.meta_pixel_id.label_tag }} {{ form.meta_pixel_id }}</div>
+  </div>
+  <div class="form-group">{{ form.seo_default_title.label_tag }} {{ form.seo_default_title }}</div>
+  <div class="form-group">{{ form.seo_default_description.label_tag }} {{ form.seo_default_description }}</div>
+  <div class="form-group">{{ form.robots_txt.label_tag }} {{ form.robots_txt }}</div>
+  <div class="form-group">{{ form.custom_css.label_tag }} {{ form.custom_css }}</div>
+  <div class="form-row">
+    <div class="form-group col-md-6">{{ form.homepage_title.label_tag }} {{ form.homepage_title }}</div>
+    <div class="form-group col-md-6">{{ form.homepage_subtitle.label_tag }} {{ form.homepage_subtitle }}</div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">{% trans 'Close' %}</button>
+    <button type="submit" class="btn btn-primary">{% trans 'Save changes' %}</button>
+  </div>
+</form>

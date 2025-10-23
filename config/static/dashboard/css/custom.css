@@ -1,0 +1,3 @@
+.settings-card { transition: box-shadow .15s ease, transform .15s ease; }
+.settings-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
+.settings-icon { font-size: 20px; width: 40px; height: 40px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; }

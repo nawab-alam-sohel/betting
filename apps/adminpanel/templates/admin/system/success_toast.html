@@ -1,0 +1,16 @@
+<script>
+  if (window.Swal) {
+    Swal.fire({
+      toast: true,
+      icon: 'success',
+      title: '{{ message|default:"Saved" }}',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1800
+    });
+  }
+  if (window.jQuery && $('#systemModal').length) {
+    $('#systemModal').modal('hide');
+  }
+</script>
+<div class="alert alert-success mb-0">{{ message|default:"Saved" }}</div>
